@@ -1,4 +1,3 @@
-# coin
 <!DOCTYPE html>
 <html lang="tr" class="h-full">
 <head>
