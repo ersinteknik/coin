@@ -1,373 +1,260 @@
 <!DOCTYPE html>
-<html lang="tr" class="dark">
+<html lang="tr" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kripto Grafik Analiz Platformu</title>
+    <title>ProCharts - Finansal Piyasaların Geleceği</title>
+    
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons CDN -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Custom CSS for theme and animations -->
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            overflow: hidden; /* Sayfanın kaymasını engelle */
+            background-color: #0d1117;
+            background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.05) 1px, transparent 0);
+            background-size: 20px 20px;
         }
-        /* Aktif buton stili */
-        .interval-btn.active {
-            background-color: #3b82f6; /* Tailwind blue-500 */
-            color: white;
+
+        .glassmorphism {
+            background: rgba(17, 24, 39, 0.6);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        .indicator-btn.active {
-            background-color: #4f46e5; /* Tailwind indigo-600 */
-            color: white;
+
+        .text-gradient {
+            background-image: linear-gradient(90deg, #22d3ee, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-fill-color: transparent;
         }
-        /* Tailwind dark mode için temel konfigürasyon */
-        .dark .bg-gray-100 { background-color: #1f2937; }
-        .dark .bg-white { background-color: #111827; }
-        .dark .text-gray-800 { color: #d1d5db; }
-        .dark .text-gray-600 { color: #9ca3af; }
-        .dark .border-gray-200 { border-color: #374151; }
-        .dark select {
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+
+        .glow-effect {
+            box-shadow: 0 0 15px rgba(34, 211, 238, 0.2), 0 0 30px rgba(167, 139, 250, 0.15);
         }
     </style>
 </head>
-<body class="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 transition-colors duration-300">
+<body class="text-gray-200">
 
-    <div id="app" class="flex flex-col h-screen">
-        <!-- Üst Menü -->
-        <header class="flex-shrink-0 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 p-2 z-10">
-            <div class="flex items-center justify-between flex-wrap gap-2">
-                <div class="flex items-center gap-4">
-                    <h1 class="text-xl font-bold text-blue-600 dark:text-blue-500">CryptoChart</h1>
-                    <select id="coin-select" class="bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md px-3 py-1.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <option value="BTCUSDT">BTC/USDT</option>
-                        <option value="ETHUSDT">ETH/USDT</option>
-                        <option value="BNBUSDT">BNB/USDT</option>
-                        <option value="SOLUSDT">SOL/USDT</option>
-                        <option value="XRPUSDT">XRP/USDT</option>
-                        <option value="ADAUSDT">ADA/USDT</option>
-                    </select>
-                </div>
-                
-                <div id="interval-container" class="flex items-center gap-1 bg-gray-100 dark:bg-gray-800 p-1 rounded-md">
-                    <button data-interval="1m" class="interval-btn px-2 py-1 text-sm rounded-md hover:bg-gray-200 dark:hover:bg-gray-700">1m</button>
-                    <button data-interval="5m" class="interval-btn px-2 py-1 text-sm rounded-md hover:bg-gray-200 dark:hover:bg-gray-700">5m</button>
-                    <button data-interval="15m" class="interval-btn px-2 py-1 text-sm rounded-md hover:bg-gray-200 dark:hover:bg-gray-700">15m</button>
-                    <button data-interval="1h" class="interval-btn px-2 py-1 text-sm rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 active">1h</button>
-                    <button data-interval="4h" class="interval-btn px-2 py-1 text-sm rounded-md hover:bg-gray-200 dark:hover:bg-gray-700">4h</button>
-                    <button data-interval="1d" class="interval-btn px-2 py-1 text-sm rounded-md hover:bg-gray-200 dark:hover:bg-gray-700">1D</button>
-                </div>
+    <!-- Header / Navigation -->
+    <header id="header" class="glassmorphism fixed top-0 left-0 right-0 z-50 transition-all duration-300">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="text-2xl font-bold text-gradient">
+                ProCharts
+            </a>
+            <nav class="hidden md:flex items-center space-x-8">
+                <a href="#features" class="hover:text-cyan-400 transition-colors duration-300">Özellikler</a>
+                <a href="#pricing" class="hover:text-cyan-400 transition-colors duration-300">Fiyatlandırma</a>
+                <a href="#contact" class="hover:text-cyan-400 transition-colors duration-300">İletişim</a>
+            </nav>
+            <div class="hidden md:flex items-center space-x-4">
+                <a href="#" class="px-4 py-2 rounded-md hover:bg-gray-700 transition-colors">Giriş Yap</a>
+                <a href="#" class="bg-cyan-500 text-white px-4 py-2 rounded-md font-semibold hover:bg-cyan-600 transition-all duration-300 transform hover:scale-105">Ücretsiz Başla</a>
+            </div>
+            <!-- Mobile Menu Button -->
+            <button id="menu-btn" class="md:hidden focus:outline-none">
+                <i data-lucide="menu" class="w-6 h-6"></i>
+            </button>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 text-center">
+                <a href="#features" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700">Özellikler</a>
+                <a href="#pricing" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700">Fiyatlandırma</a>
+                <a href="#contact" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700">İletişim</a>
+                <div class="border-t border-gray-700 my-4"></div>
+                <a href="#" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700">Giriş Yap</a>
+                <a href="#" class="block w-full mt-2 bg-cyan-500 text-white px-3 py-2 rounded-md font-semibold hover:bg-cyan-600">Ücretsiz Başla</a>
+            </div>
+        </div>
+    </header>
 
-                <div class="flex items-center gap-4">
-                     <div id="indicator-container" class="flex items-center gap-1 bg-gray-100 dark:bg-gray-800 p-1 rounded-md">
-                        <button data-indicator="SMA" data-period="20" class="indicator-btn px-2 py-1 text-sm rounded-md hover:bg-indigo-500 dark:hover:bg-indigo-500">SMA(20)</button>
-                        <button data-indicator="EMA" data-period="50" class="indicator-btn px-2 py-1 text-sm rounded-md hover:bg-indigo-500 dark:hover:bg-indigo-500">EMA(50)</button>
+    <!-- Main Content -->
+    <main>
+        <!-- Hero Section -->
+        <section class="min-h-screen flex items-center justify-center pt-24 pb-12">
+            <div class="container mx-auto px-6 text-center">
+                <div class="max-w-4xl mx-auto">
+                    <h1 class="text-4xl md:text-6xl lg:text-7xl font-extrabold leading-tight mb-6">
+                        <span class="text-gradient">Finansal Piyasaların</span> Geleceği, Sizin Kontrolünüzde.
+                    </h1>
+                    <p class="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto mb-10">
+                        En gelişmiş grafik araçları, anlık piyasa verileri ve sezgisel arayüz ile yatırımlarınıza profesyonel bir dokunuş katın.
+                    </p>
+                    <div class="flex justify-center items-center gap-4 flex-wrap">
+                        <a href="#" class="bg-cyan-500 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-cyan-600 transition-all duration-300 transform hover:scale-105 shadow-lg shadow-cyan-500/20">
+                            Hemen Keşfet
+                        </a>
+                        <a href="#" class="border-2 border-gray-600 text-gray-300 px-8 py-3 rounded-lg font-bold text-lg hover:bg-gray-700 hover:border-gray-500 transition-all duration-300">
+                            Daha Fazla Bilgi
+                        </a>
                     </div>
-                    <button id="theme-toggle" class="p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700">
-                        <i data-lucide="sun" class="block dark:hidden"></i>
-                        <i data-lucide="moon" class="hidden dark:block"></i>
-                    </button>
+                </div>
+
+                <!-- Mockup Chart Image -->
+                <div class="mt-20 max-w-6xl mx-auto p-4 rounded-xl glassmorphism glow-effect">
+                    <img src="https://placehold.co/1200x600/0d1117/22d3ee?text=Gelişmiş+Grafik+Arayüzü" alt="Gelişmiş Grafik Arayüzü" class="rounded-lg w-full h-auto">
                 </div>
             </div>
-        </header>
+        </section>
 
-        <!-- Grafik Alanı -->
-        <main class="flex-grow relative">
-            <div id="chart-container" class="absolute top-0 left-0 w-full h-full"></div>
-        </main>
-    </div>
+        <!-- Features Section -->
+        <section id="features" class="py-20">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold">Neden ProCharts?</h2>
+                    <p class="text-gray-400 mt-2">Piyasanın bir adım önünde olmanızı sağlayan araçlar.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Feature 1 -->
+                    <div class="glassmorphism rounded-xl p-8 text-center hover:border-cyan-400 transition-all duration-300 transform hover:-translate-y-2">
+                        <div class="flex justify-center mb-4">
+                            <div class="bg-cyan-500/10 p-4 rounded-full">
+                                <i data-lucide="bar-chart-2" class="w-8 h-8 text-cyan-400"></i>
+                            </div>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">Gelişmiş Grafik Araçları</h3>
+                        <p class="text-gray-400">100'den fazla teknik gösterge ve çizim aracı ile kendi analizlerinizi oluşturun.</p>
+                    </div>
+                    <!-- Feature 2 -->
+                    <div class="glassmorphism rounded-xl p-8 text-center hover:border-cyan-400 transition-all duration-300 transform hover:-translate-y-2">
+                        <div class="flex justify-center mb-4">
+                            <div class="bg-cyan-500/10 p-4 rounded-full">
+                               <i data-lucide="zap" class="w-8 h-8 text-cyan-400"></i>
+                            </div>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">Gerçek Zamanlı Veri</h3>
+                        <p class="text-gray-400">Tüm küresel borsalardan anlık veri akışı ile piyasanın nabzını tutun.</p>
+                    </div>
+                    <!-- Feature 3 -->
+                    <div class="glassmorphism rounded-xl p-8 text-center hover:border-cyan-400 transition-all duration-300 transform hover:-translate-y-2">
+                        <div class="flex justify-center mb-4">
+                             <div class="bg-cyan-500/10 p-4 rounded-full">
+                                <i data-lucide="users" class="w-8 h-8 text-cyan-400"></i>
+                            </div>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">Sosyal Ticaret Ağı</h3>
+                        <p class="text-gray-400">Diğer yatırımcıların fikirlerini keşfedin, kendi analizlerinizi paylaşın.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pricing Section -->
+        <section id="pricing" class="py-20 bg-black/20">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold">Size Uygun Planı Seçin</h2>
+                    <p class="text-gray-400 mt-2">İhtiyaçlarınıza göre tasarlanmış esnek paketler.</p>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                    <!-- Pricing Plan 1: Basic -->
+                    <div class="glassmorphism rounded-xl p-8 flex flex-col">
+                        <h3 class="text-2xl font-bold text-center">Basic</h3>
+                        <p class="text-center text-gray-400 mt-2">Yeni başlayanlar için</p>
+                        <div class="text-4xl font-extrabold text-center my-6">
+                            Ücretsiz
+                        </div>
+                        <ul class="space-y-4 flex-grow">
+                            <li class="flex items-center"><i data-lucide="check-circle" class="w-5 h-5 text-green-500 mr-2"></i>Temel Grafik Araçları</li>
+                            <li class="flex items-center"><i data-lucide="check-circle" class="w-5 h-5 text-green-500 mr-2"></i>Gecikmeli Piyasa Verileri</li>
+                            <li class="flex items-center"><i data-lucide="check-circle" class="w-5 h-5 text-green-500 mr-2"></i>1 Adet İzleme Listesi</li>
+                        </ul>
+                        <a href="#" class="w-full mt-8 text-center bg-gray-600 text-white py-3 rounded-lg font-semibold hover:bg-gray-700 transition-colors">Planı Seç</a>
+                    </div>
+                    <!-- Pricing Plan 2: Pro (Highlighted) -->
+                    <div class="glassmorphism rounded-xl p-8 flex flex-col border-2 border-cyan-500 transform scale-105 glow-effect">
+                        <p class="text-center font-bold text-cyan-400">EN POPÜLER</p>
+                        <h3 class="text-2xl font-bold text-center mt-1">Pro</h3>
+                        <p class="text-center text-gray-400 mt-2">Aktif yatırımcılar için</p>
+                        <div class="text-4xl font-extrabold text-center my-6">
+                            ₺149<span class="text-lg font-medium text-gray-400">/ay</span>
+                        </div>
+                        <ul class="space-y-4 flex-grow">
+                            <li class="flex items-center"><i data-lucide="check-circle" class="w-5 h-5 text-green-500 mr-2"></i>Tüm Gelişmiş Araçlar</li>
+                            <li class="flex items-center"><i data-lucide="check-circle" class="w-5 h-5 text-green-500 mr-2"></i>Gerçek Zamanlı Veriler</li>
+                            <li class="flex items-center"><i data-lucide="check-circle" class="w-5 h-5 text-green-500 mr-2"></i>10 Adet İzleme Listesi</li>
+                            <li class="flex items-center"><i data-lucide="check-circle" class="w-5 h-5 text-green-500 mr-2"></i>Reklamsız Deneyim</li>
+                        </ul>
+                        <a href="#" class="w-full mt-8 text-center bg-cyan-500 text-white py-3 rounded-lg font-semibold hover:bg-cyan-600 transition-colors">Planı Seç</a>
+                    </div>
+                    <!-- Pricing Plan 3: Premium -->
+                    <div class="glassmorphism rounded-xl p-8 flex flex-col">
+                        <h3 class="text-2xl font-bold text-center">Premium</h3>
+                        <p class="text-center text-gray-400 mt-2">Profesyoneller için</p>
+                        <div class="text-4xl font-extrabold text-center my-6">
+                            ₺299<span class="text-lg font-medium text-gray-400">/ay</span>
+                        </div>
+                        <ul class="space-y-4 flex-grow">
+                            <li class="flex items-center"><i data-lucide="check-circle" class="w-5 h-5 text-green-500 mr-2"></i>Tüm Pro Özellikleri</li>
+                            <li class="flex items-center"><i data-lucide="check-circle" class="w-5 h-5 text-green-500 mr-2"></i>Öncelikli Destek</li>
+                            <li class="flex items-center"><i data-lucide="check-circle" class="w-5 h-5 text-green-500 mr-2"></i>Sınırsız İzleme Listesi</li>
+                        </ul>
+                        <a href="#" class="w-full mt-8 text-center bg-gray-600 text-white py-3 rounded-lg font-semibold hover:bg-gray-700 transition-colors">Planı Seç</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer id="contact" class="border-t border-gray-800">
+        <div class="container mx-auto px-6 py-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="text-center md:text-left mb-4 md:mb-0">
+                    <p class="text-lg font-bold text-gradient">ProCharts</p>
+                    <p class="text-gray-500">&copy; 2025 ProCharts. Tüm hakları saklıdır.</p>
+                </div>
+                <div class="flex space-x-6">
+                    <a href="#" class="text-gray-500 hover:text-cyan-400"><i data-lucide="twitter"></i></a>
+                    <a href="#" class="text-gray-500 hover:text-cyan-400"><i data-lucide="github"></i></a>
+                    <a href="#" class="text-gray-500 hover:text-cyan-400"><i data-lucide="linkedin"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
 
     <script>
-        // --- DOM Elementleri ---
-        const chartContainer = document.getElementById('chart-container');
-        const coinSelect = document.getElementById('coin-select');
-        const intervalContainer = document.getElementById('interval-container');
-        const indicatorContainer = document.getElementById('indicator-container');
-        const themeToggleBtn = document.getElementById('theme-toggle');
-        const htmlElement = document.documentElement;
+        // Lucide Icons'u başlatma
+        lucide.createIcons();
 
-        // --- Grafik ve Veri Değişkenleri ---
-        let chart;
-        let candlestickSeries;
-        let volumeSeries;
-        let currentSymbol = 'BTCUSDT';
-        let currentInterval = '1h';
-        let historicalData = [];
-        let indicatorSeries = new Map(); // Aktif indikatör serilerini saklamak için
+        // Mobil menü toggle script'i
+        const menuBtn = document.getElementById('menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
 
-        // --- Tema Ayarları ---
-        const lightTheme = {
-            chart: {
-                layout: {
-                    backgroundColor: '#FFFFFF',
-                    textColor: '#1f2937',
-                },
-                grid: {
-                    vertLines: { color: '#e5e7eb' },
-                    horzLines: { color: '#e5e7eb' },
-                },
-            },
-            series: {
-                upColor: '#22c55e',
-                downColor: '#ef4444',
-                borderDownColor: '#ef4444',
-                borderUpColor: '#22c55e',
-                wickDownColor: '#ef4444',
-                wickUpColor: '#22c55e',
-            },
-        };
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
 
-        const darkTheme = {
-            chart: {
-                layout: {
-                    backgroundColor: '#111827',
-                    textColor: '#d1d5db',
-                },
-                grid: {
-                    vertLines: { color: '#374151' },
-                    horzLines: { color: '#374151' },
-                },
-            },
-            series: {
-                upColor: '#22c55e',
-                downColor: '#ef4444',
-                borderDownColor: '#ef4444',
-                borderUpColor: '#22c55e',
-                wickDownColor: '#ef4444',
-                wickUpColor: '#22c55e',
-            },
-        };
-        
-        // --- Başlangıç Fonksiyonları ---
-
-        // Grafik oluşturma ve yapılandırma
-        function initializeChart() {
-            // requestAnimationFrame, tarayıcının bir sonraki render işleminden hemen önce
-            // çalışarak DOM elementlerinin boyutlarının doğru bir şekilde hesaplandığından
-            // emin olmak için kullanılır. Bu, layout ile ilgili zamanlama sorunlarını çözer.
-            const createTheChart = () => {
-                if (!chartContainer || chartContainer.clientWidth === 0 || chartContainer.clientHeight === 0) {
-                    // Boyutlar hala hazır değilse, bir sonraki frame'i bekle.
-                    requestAnimationFrame(createTheChart);
-                    return;
-                }
-
-                const currentTheme = htmlElement.classList.contains('dark') ? darkTheme : lightTheme;
-                chart = LightweightCharts.createChart(chartContainer, {
-                    ...currentTheme.chart,
-                    width: chartContainer.clientWidth,
-                    height: chartContainer.clientHeight,
-                    timeScale: {
-                        timeVisible: true,
-                        secondsVisible: false,
-                    },
-                     crosshair: {
-                        mode: LightweightCharts.CrosshairMode.Normal,
-                    },
-                });
-
-                candlestickSeries = chart.addCandlestickSeries(currentTheme.series);
-                volumeSeries = chart.addHistogramSeries({
-                    color: '#3866d6',
-                    priceFormat: {
-                        type: 'volume',
-                    },
-                    priceScaleId: '', // Hacim göstergesini ayrı bir ölçekte gösterme
-                });
-                chart.priceScale('').applyOptions({
-                    scaleMargins: {
-                        top: 0.8, // Hacim için alt boşluk
-                        bottom: 0,
-                    },
-                });
-
-                // Grafik başarıyla başlatıldıktan sonra veriyi çek.
-                fetchCandleData(currentSymbol, currentInterval);
-            };
-            
-            // Başlatma sürecini bir sonraki animasyon frame'inde başlat.
-            requestAnimationFrame(createTheChart);
-        }
-        
-        // Binance API'sinden veri çekme
-        async function fetchCandleData(symbol, interval) {
-            try {
-                const response = await fetch(`https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=${interval}&limit=1000`);
-                if (!response.ok) {
-                    throw new Error(`Veri alınamadı: ${response.status}`);
-                }
-                const data = await response.json();
-                
-                // Veriyi Lightweight Charts formatına dönüştür
-                const candleData = data.map(d => ({
-                    time: d[0] / 1000,
-                    open: parseFloat(d[1]),
-                    high: parseFloat(d[2]),
-                    low: parseFloat(d[3]),
-                    close: parseFloat(d[4]),
-                }));
-
-                const volumeData = data.map(d => ({
-                    time: d[0] / 1000,
-                    value: parseFloat(d[5]),
-                    color: parseFloat(d[4]) > parseFloat(d[1]) ? 'rgba(34, 197, 94, 0.5)' : 'rgba(239, 68, 68, 0.5)',
-                }));
-
-                historicalData = candleData; // İndikatör hesaplamaları için veriyi sakla
-                candlestickSeries.setData(candleData);
-                volumeSeries.setData(volumeData);
-                chart.timeScale().fitContent();
-                updateAllIndicators();
-
-            } catch (error) {
-                console.error("API Hatası:", error);
-            }
-        }
-        
-        // --- İndikatör Hesaplama Fonksiyonları ---
-
-        // Basit Hareketli Ortalama (SMA)
-        function calculateSMA(data, period) {
-            let smaData = [];
-            if (data.length < period) return smaData;
-            for (let i = period - 1; i < data.length; i++) {
-                let sum = 0;
-                for (let j = 0; j < period; j++) {
-                    sum += data[i - j].close;
-                }
-                smaData.push({
-                    time: data[i].time,
-                    value: sum / period,
-                });
-            }
-            return smaData;
-        }
-
-        // Üssel Hareketli Ortalama (EMA)
-        function calculateEMA(data, period) {
-            let emaData = [];
-            if (data.length < period) return emaData;
-            let multiplier = 2 / (period + 1);
-            // İlk EMA değeri, ilk periyodun SMA'sıdır
-            let initialSum = 0;
-            for (let i = 0; i < period; i++) {
-                initialSum += data[i].close;
-            }
-            let prevEma = initialSum / period;
-            
-            emaData.push({ time: data[period - 1].time, value: prevEma });
-
-            for (let i = period; i < data.length; i++) {
-                const ema = (data[i].close - prevEma) * multiplier + prevEma;
-                emaData.push({ time: data[i].time, value: ema });
-                prevEma = ema;
-            }
-            return emaData;
-        }
-
-
-        // --- Olay Yöneticileri (Event Handlers) ---
-
-        // Tema değiştirme
-        function handleThemeToggle() {
-            htmlElement.classList.toggle('dark');
-            const isDark = htmlElement.classList.contains('dark');
-            const newTheme = isDark ? darkTheme : lightTheme;
-            chart.applyOptions(newTheme.chart);
-            candlestickSeries.applyOptions(newTheme.series);
-        }
-
-        // Coin değiştirme
-        function handleSymbolChange(event) {
-            currentSymbol = event.target.value;
-            fetchCandleData(currentSymbol, currentInterval);
-        }
-
-        // Zaman aralığı değiştirme
-        function handleIntervalChange(event) {
-            const target = event.target.closest('.interval-btn');
-            if (!target) return;
-
-            // Aktif stil yönetimi
-            if (intervalContainer.querySelector('.active')) {
-                intervalContainer.querySelector('.active').classList.remove('active');
-            }
-            target.classList.add('active');
-
-            currentInterval = target.dataset.interval;
-            fetchCandleData(currentSymbol, currentInterval);
-        }
-        
-        // İndikatör Ekle/Kaldır
-        function handleIndicatorToggle(event) {
-            const target = event.target.closest('.indicator-btn');
-            if (!target) return;
-            
-            target.classList.toggle('active');
-            updateAllIndicators();
-        }
-        
-        // Tüm aktif indikatörleri güncelle
-        function updateAllIndicators() {
-            // Önce mevcut tüm indikatör serilerini kaldır
-            indicatorSeries.forEach(series => chart.removeSeries(series));
-            indicatorSeries.clear();
-            
-            // "active" olan butonlara göre yeniden oluştur
-            indicatorContainer.querySelectorAll('.indicator-btn.active').forEach(button => {
-                 const indicatorName = button.dataset.indicator;
-                 const period = parseInt(button.dataset.period);
-                 const seriesId = `${indicatorName}_${period}`;
-
-                 let indicatorData;
-                 if (indicatorName === 'SMA') {
-                    indicatorData = calculateSMA(historicalData, period);
-                 } else if (indicatorName === 'EMA') {
-                    indicatorData = calculateEMA(historicalData, period);
-                 }
-
-                 if(indicatorData && indicatorData.length > 0){
-                    const color = indicatorName === 'SMA' ? '#f97316' : '#8b5cf6';
-                    const lineSeries = chart.addLineSeries({
-                        color: color,
-                        lineWidth: 2,
-                        priceLineVisible: false,
-                        lastValueVisible: false,
-                        crosshairMarkerVisible: false,
-                    });
-                    lineSeries.setData(indicatorData);
-                    indicatorSeries.set(seriesId, lineSeries);
-                 }
+        // Sayfa içi linklere tıklandığında menüyü kapatma
+        document.querySelectorAll('#mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
             });
-        }
-
-        // Pencere yeniden boyutlandırıldığında grafiği ayarla
-        function handleResize() {
-            if (chart) {
-                chart.resize(chartContainer.clientWidth, chartContainer.clientHeight);
+        });
+        
+        // Header'ı scroll sırasında değiştirme
+        const header = document.getElementById('header');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                header.classList.add('py-2');
+                header.classList.remove('py-4');
+            } else {
+                header.classList.add('py-4');
+                header.classList.remove('py-2');
             }
-        }
-
-        // --- Ana Başlatma ---
-        function init() {
-            lucide.createIcons(); // Lucide ikonlarını oluştur
-            
-            // Grafik oluşturma sürecini başlat (bu fonksiyon içinde veri çekme de tetiklenecek)
-            initializeChart();
-            
-            // Olay dinleyicilerini ekle
-            themeToggleBtn.addEventListener('click', handleThemeToggle);
-            coinSelect.addEventListener('change', handleSymbolChange);
-            intervalContainer.addEventListener('click', handleIntervalChange);
-            indicatorContainer.addEventListener('click', handleIndicatorToggle);
-            window.addEventListener('resize', handleResize);
-        }
-
-        // Sayfa tamamen yüklendiğinde başlat
-        window.addEventListener('load', init);
+        });
     </script>
 </body>
 </html>
-
