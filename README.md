@@ -11,45 +11,45 @@
     <style>
         /* Sayfanın tamamını kaplaması ve kaydırma çubuklarını kaldırması için */
         html, body {
+            width: 100%; /* Genişliğin tüm ekranı kapladığından emin ol */
             height: 100%;
             margin: 0;
-            overflow: hidden;
+            padding: 0; /* Tarayıcı varsayılan boşluklarını sıfırla */
+            overflow: hidden; /* Kaydırma çubuklarını kesin olarak engelle */
             font-family: 'Inter', sans-serif;
         }
         /* Google Fonts */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
     </style>
 </head>
-<body class="bg-gray-900 text-white">
+<body class="bg-gray-900 text-white flex flex-col h-screen">
 
-    <div id="app" class="flex flex-col h-screen">
-        <!-- Header -->
-        <header class="flex items-center p-4 border-b border-gray-700 bg-gray-800/50">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-cyan-400 mr-3" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M10 3a1 1 0 00-1 1v1.333a1 1 0 00.52.888l5 2.5a1 1 0 00.48-.888V5a1 1 0 00-1-1h-4zm-2 6.5a1 1 0 011-1h4a1 1 0 011 1v3.333a1 1 0 01-.52.888l-5 2.5a1 1 0 01-1.48-.888V9.5zM3.52 7.388a1 1 0 00-.48.888v5.224a1 1 0 001.48.888l5-2.5a1 1 0 00.52-.888V9.5a1 1 0 00-1-1h-4a1 1 0 00-1 .388z" clip-rule="evenodd" />
-            </svg>
-            <h1 class="text-xl font-bold">Piyasa Analizi</h1>
-            <div class="ml-auto flex items-center space-x-4">
-                <select id="symbol-select" class="bg-gray-700 border border-gray-600 rounded-md px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-cyan-500">
-                    <option value="BTCUSD">BTC/USD</option>
-                    <option value="ETHUSD">ETH/USD</option>
-                </select>
-                <div class="flex space-x-1 bg-gray-700 p-1 rounded-md">
-                    <button class="timeframe-btn active" data-timeframe="1D">1G</button>
-                    <button class="timeframe-btn" data-timeframe="4H">4S</button>
-                    <button class="timeframe-btn" data-timeframe="1H">1S</button>
-                </div>
+    <!-- Header -->
+    <header class="flex items-center p-4 border-b border-gray-700 bg-gray-800/50 flex-shrink-0">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-cyan-400 mr-3" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10 3a1 1 0 00-1 1v1.333a1 1 0 00.52.888l5 2.5a1 1 0 00.48-.888V5a1 1 0 00-1-1h-4zm-2 6.5a1 1 0 011-1h4a1 1 0 011 1v3.333a1 1 0 01-.52.888l-5 2.5a1 1 0 01-1.48-.888V9.5zM3.52 7.388a1 1 0 00-.48.888v5.224a1 1 0 001.48.888l5-2.5a1 1 0 00.52-.888V9.5a1 1 0 00-1-1h-4a1 1 0 00-1 .388z" clip-rule="evenodd" />
+        </svg>
+        <h1 class="text-xl font-bold">Piyasa Analizi</h1>
+        <div class="ml-auto flex items-center space-x-4">
+            <select id="symbol-select" class="bg-gray-700 border border-gray-600 rounded-md px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                <option value="BTCUSD">BTC/USD</option>
+                <option value="ETHUSD">ETH/USD</option>
+            </select>
+            <div class="flex space-x-1 bg-gray-700 p-1 rounded-md">
+                <button class="timeframe-btn active" data-timeframe="1D">1G</button>
+                <button class="timeframe-btn" data-timeframe="4H">4S</button>
+                <button class="timeframe-btn" data-timeframe="1H">1S</button>
             </div>
-        </header>
+        </div>
+    </header>
 
-        <!-- Main Content -->
-        <main class="flex-grow flex">
-            <!-- Chart Area -->
-            <div id="chart-container" class="flex-grow h-full relative">
-                <!-- Chart will be rendered here -->
-            </div>
-        </main>
-    </div>
+    <!-- Main Content -->
+    <main class="flex-grow flex">
+        <!-- Chart Area -->
+        <div id="chart-container" class="flex-grow h-full relative">
+            <!-- Chart will be rendered here -->
+        </div>
+    </main>
 
     <script>
         // Stil için özel Tailwind yapılandırması
@@ -196,10 +196,10 @@
         // Başlangıçta grafiği yükle
         updateChart();
 
-        // DÜZELTME: Tarayıcı penceresi yeniden boyutlandırıldığında da grafiği ayarla
+        // Tarayıcı penceresi yeniden boyutlandırıldığında da grafiği ayarla
         window.addEventListener('resize', resizeChart);
 
-        // DÜZELTME: Sayfa ve tüm kaynaklar (CSS dahil) yüklendiğinde grafiğin
+        // Sayfa ve tüm kaynaklar (CSS dahil) yüklendiğinde grafiğin
         // son bir kez doğru boyuta ayarlandığından emin ol. Bu, "küçük görünme"
         // sorununu çözer.
         window.addEventListener('load', resizeChart);
