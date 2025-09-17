@@ -277,43 +277,49 @@
             });
         });
 
-        // İzleme listesini aç/kapat
-        let isWatchlistOpen = true;
-        
-        function toggleWatchlistPanel() {
-            isWatchlistOpen = !isWatchlistOpen;
-            mainContent.classList.toggle('watchlist-is-closed');
+        // Grafiği yeniden boyutlandıran merkezi fonksiyon
+        function resizeChart() {
+            const { width, height } = chartContainer.getBoundingClientRect();
+            if (width > 0 && height > 0) {
+                chart.applyOptions({ width, height });
+            }
+        }
 
-            if (isWatchlistOpen) {
-                // Panel açıkken sağa bakan ok
+        // İzleme listesini aç/kapat
+        function toggleWatchlistPanel() {
+            const isCurrentlyClosed = mainContent.classList.contains('watchlist-is-closed');
+            
+            // Paneli açmak için sınıfı kaldır, kapatmak için ekle
+            if (isCurrentlyClosed) {
+                mainContent.classList.remove('watchlist-is-closed');
+                // Panel açıkken sağa bakan ok (kapatma ikonu)
                 toggleIcon.innerHTML = `<path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />`;
             } else {
-                // Panel kapalıyken sola bakan ok
+                mainContent.classList.add('watchlist-is-closed');
+                // Panel kapalıyken sola bakan ok (açma ikonu)
                 toggleIcon.innerHTML = `<path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />`;
             }
-            // Manuel yeniden boyutlandırma kaldırıldı.
-            // Bu iş artık tamamen aşağıdaki ResizeObserver tarafından yönetiliyor.
         }
 
         watchlistToggleBtn.addEventListener('click', toggleWatchlistPanel);
         toggleWatchlistHeaderBtn.addEventListener('click', toggleWatchlistPanel);
-
-        // Grafik boyutunu pencereye göre ayarla
-        const resizeObserver = new ResizeObserver(entries => {
-            const { width, height } = entries[0].contentRect;
-            // Genişlik veya yükseklik sıfır değilse grafiği yeniden boyutlandır
-            if (width > 0 && height > 0) {
-                chart.applyOptions({ width, height });
-                chart.timeScale().fitContent();
-            }
+        
+        // **ÇÖZÜM: Animasyon bittiğinde grafiği yeniden boyutlandır**
+        mainContent.addEventListener('transitionend', () => {
+            // Bu olay, grid-template-columns animasyonu bittiğinde tetiklenir.
+            resizeChart();
         });
-        resizeObserver.observe(chartContainer);
+
+        // Pencere yeniden boyutlandırıldığında grafiği de ayarla
+        window.addEventListener('resize', resizeChart);
 
         // Başlangıçta grafiği yükle
         updateChart();
+        
+        // **DÜZELTME: Sayfa ilk yüklendiğinde grafiğin boyutunu ayarla**
+        resizeChart();
 
     </script>
 </body>
 </html>
-
 
