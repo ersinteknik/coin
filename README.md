@@ -144,44 +144,51 @@
 
         // Grafik oluşturma ve yapılandırma
         function initializeChart() {
-            // DOM elementinin boyutu tarayıcı tarafından hesaplanana kadar bekleme mekanizması.
-            // Bu, özellikle yavaş render olan ortamlarda hatayı önler.
-            if (!chartContainer || chartContainer.clientWidth === 0 || chartContainer.clientHeight === 0) {
-                setTimeout(initializeChart, 50); // 50ms sonra tekrar dene
-                return;
-            }
+            // requestAnimationFrame, tarayıcının bir sonraki render işleminden hemen önce
+            // çalışarak DOM elementlerinin boyutlarının doğru bir şekilde hesaplandığından
+            // emin olmak için kullanılır. Bu, layout ile ilgili zamanlama sorunlarını çözer.
+            const createTheChart = () => {
+                if (!chartContainer || chartContainer.clientWidth === 0 || chartContainer.clientHeight === 0) {
+                    // Boyutlar hala hazır değilse, bir sonraki frame'i bekle.
+                    requestAnimationFrame(createTheChart);
+                    return;
+                }
 
-            const currentTheme = htmlElement.classList.contains('dark') ? darkTheme : lightTheme;
-            chart = LightweightCharts.createChart(chartContainer, {
-                ...currentTheme.chart,
-                width: chartContainer.clientWidth,
-                height: chartContainer.clientHeight,
-                timeScale: {
-                    timeVisible: true,
-                    secondsVisible: false,
-                },
-                 crosshair: {
-                    mode: LightweightCharts.CrosshairMode.Normal,
-                },
-            });
+                const currentTheme = htmlElement.classList.contains('dark') ? darkTheme : lightTheme;
+                chart = LightweightCharts.createChart(chartContainer, {
+                    ...currentTheme.chart,
+                    width: chartContainer.clientWidth,
+                    height: chartContainer.clientHeight,
+                    timeScale: {
+                        timeVisible: true,
+                        secondsVisible: false,
+                    },
+                     crosshair: {
+                        mode: LightweightCharts.CrosshairMode.Normal,
+                    },
+                });
 
-            candlestickSeries = chart.addCandlestickSeries(currentTheme.series);
-            volumeSeries = chart.addHistogramSeries({
-                color: '#3866d6',
-                priceFormat: {
-                    type: 'volume',
-                },
-                priceScaleId: '', // Hacim göstergesini ayrı bir ölçekte gösterme
-            });
-            chart.priceScale('').applyOptions({
-                scaleMargins: {
-                    top: 0.8, // Hacim için alt boşluk
-                    bottom: 0,
-                },
-            });
+                candlestickSeries = chart.addCandlestickSeries(currentTheme.series);
+                volumeSeries = chart.addHistogramSeries({
+                    color: '#3866d6',
+                    priceFormat: {
+                        type: 'volume',
+                    },
+                    priceScaleId: '', // Hacim göstergesini ayrı bir ölçekte gösterme
+                });
+                chart.priceScale('').applyOptions({
+                    scaleMargins: {
+                        top: 0.8, // Hacim için alt boşluk
+                        bottom: 0,
+                    },
+                });
 
-            // Grafik başarıyla başlatıldıktan sonra veriyi çek.
-            fetchCandleData(currentSymbol, currentInterval);
+                // Grafik başarıyla başlatıldıktan sonra veriyi çek.
+                fetchCandleData(currentSymbol, currentInterval);
+            };
+            
+            // Başlatma sürecini bir sonraki animasyon frame'inde başlat.
+            requestAnimationFrame(createTheChart);
         }
         
         // Binance API'sinden veri çekme
